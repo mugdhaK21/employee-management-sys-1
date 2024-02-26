@@ -4,6 +4,29 @@
 #include<iostream>
 #include<vector>
 using namespace std;
+class Employee;
+class payrollSystem;
+class Attendance {
+private:
+    int attendance = 100;
+    int daysPresent;
+    int total_workingdays;
+
+    // daysPresent(daysPresent) {};
+
+    // int getEmployeeId() const;
+protected:
+
+    Attendance();
+    int getDaysPresent() const;
+    void setDaysPresent();
+    void setAttendance();
+    int getAttendance();
+    // void displayAttendance();
+
+    friend Employee;
+
+};
 
 // Employee base class
 class Employee {
@@ -16,27 +39,30 @@ protected:
     int id;
     string newname;
     double newBaseSalary;
-    double newperks; 
+    double newperks;
     double newallowances;
+    Attendance* eAttendance=NULL;
 
 public:
-    Employee(string name, int employeeId, double baseSalary) : name(name), employeeId(employeeId), baseSalary(baseSalary) {}
+    Employee(string name, int employeeId, double baseSalary) : name(name), employeeId(employeeId), baseSalary(baseSalary),eAttendance(new Attendance){}
 
     virtual ~Employee() {};
 
-    virtual double calculateSalary() const= 0;
+    virtual double calculateSalary() const = 0;
 
     virtual void display() const;
 
     int getEmployeeId();
 
     void setBaseSalary(double salary);
-
+    void setAtt();
+    int getEAtt();
 
     //functions for update the new data---let us define in source file 
     void setupdatedNewname(string name);
     void setupdatesperks(double perks);
     void setupdatesallowances(double allowances);
+    friend payrollSystem;
 };
 
 // Regular Employee derived class
@@ -50,7 +76,7 @@ public:
 
     double calculateSalary() const;
 
-    void display() const ;
+    void display() const;
 };
 
 //Derived class for Contract Employees
@@ -69,22 +95,6 @@ public:
 };
 
 // Class to maintain monthly attendance records
-class Attendance {
-private:
-    int employeeId;
-    int daysPresent;
-    int total_workingdays;
-
-public:
-    Attendance(int employeeId, int daysPresent) : employeeId(employeeId), daysPresent(daysPresent) {}
-
-    int getEmployeeId() const;
-
-    int getDaysPresent() const;
-
-   void displayAttendance();
-
-};
 
 // Class to maintain employee payroll data
 
@@ -92,11 +102,11 @@ class PayrollSystem {
 private:
 
     vector<Employee*> employees;
-    vector<Attendance> attendanceRecords;
+  
 
 public:
-   /* It is responsible for deallocating memory held by dynamically allocated Employee objects in the employees vector.
-        It iterates through the employees vector and deletes each Employee object.*/
+    /* It is responsible for deallocating memory held by dynamically allocated Employee objects in the employees vector.
+         It iterates through the employees vector and deletes each Employee object.*/
     ~PayrollSystem() {
         for (Employee* emp : employees) {
             delete emp;
@@ -110,7 +120,7 @@ public:
     /*This function displays details of all employees along with their attendance records.
         It sorts the employees vector based on the salary of each employee in descending order using a lambda functionand sort.
         It then iterates through the sorted employees vectorand displays each employee's details.
-        For each employee, it searches for their attendance record in the attendanceRecords vectorand displays the 
+        For each employee, it searches for their attendance record in the attendanceRecords vectorand displays the
         number of days present if found, otherwise, it indicates that attendance is not recorded.*/
     void displayAllEmployees() const;
 
@@ -136,12 +146,11 @@ public:
         It searches for the employee with the provided ID using the searchEmployeeById function.
         If the employee is found, it updates the base salary of the employee using the setBaseSalary function.
         If the employee is not found, it prints a message indicating that the employee with the given ID was not found.*/
- 
-    void updateEmployeeData(int id, double newBaseSalary, string newname,double newperks,double newallowances);
 
+    void updateEmployeeData(int id);
+   
 };
 
 
 
 #endif
-
